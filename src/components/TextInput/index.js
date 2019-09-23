@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import "./textinput.css";
+import "./style.css";
 
 export class TextInput extends React.Component {
   state = {
@@ -8,6 +8,10 @@ export class TextInput extends React.Component {
     valid: false,
     errors: []
   };
+
+  componentDidMount() {
+    this.props.registerField(this.props.name);
+  }
 
   render() {
     return (
@@ -49,6 +53,35 @@ export class TextInput extends React.Component {
     );
   };
 
+  notify = () => {
+    if (!this.props.name) {
+      throw new Error('[name] prop is required on TextInput!');
+    }
+
+    this.props.onInputValidated(
+      this.props.name,
+      this.state.valid
+    );
+  }
+
+  setFormError(valid, errorText) {
+    if (valid) {
+      this.setState(oldState => ({
+        ...oldState,
+        errors: [
+          ...oldState.errors.filter(err => err !== errorText)
+        ]
+      }));
+    } else {
+      if (this.state.errors.includes(errorText)) return;
+
+      this.setState(oldState => ({
+        ...oldState,
+        errors: [...oldState.errors, errorText]
+      }));
+    }
+  }
+
   validate() {
     if (this.state.dirty) {
       if (this.props.required) {
@@ -58,45 +91,23 @@ export class TextInput extends React.Component {
       if (this.props.pattern) {
         this.validateRegex();
       }
+
+      this.setState(state => ({
+        ...state,
+        valid: state.errors.length === 0
+      }), this.notify);
     }
   }
 
   validateRegex() {
-    if (this.state.input.match(this.props.pattern)) {
-      this.setState({
-        ...this.state,
-        valid: true,
-        errors: [
-          ...this.state.errors.filter(err => err !== "field must be formatted")
-        ]
-      });
-    } else {
-      if (this.state.errors.includes("field must be formatted")) return;
-      this.setState({
-        ...this.state,
-        valid: false,
-        errors: [...this.state.errors, "field must be formatted"]
-      });
-    }
+      this.setFormError(
+        this.props.pattern.test(this.state.input), 
+        'field must be formatted');
   }
 
   validateRequired() {
-    if (this.state.input.trim() === "") {
-      // Spread operator
-      // { input: this.state.input, dirty: this.state.dirty, valid: false }
-      this.setState({
-        ...this.state,
-        valid: false,
-        errors: [...this.state.errors, "field is required"]
-      });
-    } else {
-      this.setState({
-        ...this.state,
-        valid: true,
-        errors: [
-          ...this.state.errors.filter(err => err !== "field is required")
-        ]
-      });
-    }
+    this.setFormError(
+      this.state.input.trim() !== '', 
+      'field is required')
   }
 }
