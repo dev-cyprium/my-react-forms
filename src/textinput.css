@@ -1,0 +1,7 @@
+.TextInput-invalid {
+  border: 2px solid crimson;
+}
+
+.TextInput-error-text {
+  color: crimson;
+}
