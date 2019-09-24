@@ -1,7 +1,9 @@
 import React, { Fragment } from "react";
+import {FormConsumer} from '../Form/index';
 import "./style.css";
 
 export class TextInput extends React.Component {
+  static contextType = FormConsumer;
   state = {
     input: "",
     dirty: false,
@@ -10,7 +12,7 @@ export class TextInput extends React.Component {
   };
 
   componentDidMount() {
-    this.props.registerField(this.props.name);
+    this.context.registerField(this.props.name);
   }
 
   render() {
@@ -58,7 +60,7 @@ export class TextInput extends React.Component {
       throw new Error('[name] prop is required on TextInput!');
     }
 
-    this.props.onInputValidated(
+    this.context.onInputValidated(
       this.props.name,
       this.state.valid
     );

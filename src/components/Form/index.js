@@ -6,6 +6,9 @@ const toDynamic = (old, key, val) => {
   return Object.assign({...old}, newObj);
 }
 
+const FormContext = React.createContext();
+
+export const FormConsumer = FormContext.Consumer;
 export class Form extends React.Component {
   state = {
     valid: false,
@@ -34,13 +37,15 @@ export class Form extends React.Component {
 
   render() {
     return  (
-      <form>
-        {this.props.render({
-          onInputValidated: this.onInputValidated,
-          registerField: this.registerField,
-          valid: this.state.valid
-        })}
-      </form>
+      <FormContext.Provider value={{
+        onInputValidated: this.onInputValidated,
+        registerField: this.registerField,
+        valid: this.state.valid
+      }}>
+        <form>
+          {this.props.children}
+        </form>
+      </FormContext.Provider>
     );
   }
 }

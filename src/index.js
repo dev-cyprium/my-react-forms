@@ -3,15 +3,24 @@ import ReactDOM from "react-dom";
 
 import "./styles.css";
 import { TextInput } from "./components/TextInput";
-import { Form } from "./components/Form";
+import { Form, FormConsumer } from "./components/Form";
 
 import {ModalProvider, ModalRoot, MessageModal, ModalConsumer, ErrorModal} from './components/Modal'
 
+const SubmitButton = () => (
+  <FormConsumer>
+  {({valid}) => (
+    <button disabled={!valid}>
+      Submit
+    </button>
+  )}
+  </FormConsumer>
+);
+
 function App() {
   return (
-    <Form render={ ({onInputValidated, registerField, valid}) => (
+    <Form>
       <Fragment>
-        
         <ModalConsumer>
           {({showModal}) => (
             <button type="button" onClick={() => showModal(MessageModal)}>
@@ -35,8 +44,6 @@ function App() {
             placeholder="Ime..."
             required
             pattern={/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/}
-            onInputValidated={onInputValidated}
-            registerField={registerField}
           />
         </div>
 
@@ -47,19 +54,13 @@ function App() {
             placeholder="Prezime..."
             required
             pattern={/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/}
-            onInputValidated={onInputValidated}
-            registerField={registerField}
           />
         </div>
 
         <div>
-          <button disabled={!valid}>
-            Submit
-          </button>
-          
+          <SubmitButton />
         </div>
       </Fragment>
-    )}>
     </Form>
   );
 }
