@@ -1,68 +1,28 @@
-import React, {Fragment} from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 
 import "./styles.css";
-import { TextInput } from "./components/TextInput";
-import { Form, FormConsumer } from "./components/Form";
+import { Home } from "./scenes/Home";
+import { Router, Link, Route } from './components/Router';
+import { ModalProvider } from './components/Modal';
 
-import {ModalProvider, ModalRoot, MessageModal, ModalConsumer, ErrorModal} from './components/Modal'
-
-const SubmitButton = () => (
-  <FormConsumer>
-  {({valid}) => (
-    <button disabled={!valid}>
-      Submit
-    </button>
-  )}
-  </FormConsumer>
-);
+const Hello = () => (
+  <h1>Hello, world!</h1>
+)
 
 function App() {
   return (
-    <Form>
-      <Fragment>
-        <ModalConsumer>
-          {({showModal}) => (
-            <button type="button" onClick={() => showModal(MessageModal)}>
-              Open Modal
-            </button>
-          )}
-        </ModalConsumer>
+  <Router>
+    <Link to="/">
+      Home
+    </Link>
+    <Link to="/hello">
+      Hello
+    </Link>
 
-        <ModalConsumer>
-          {(manager) => (
-            <button type="button" onClick={() => manager.showModal(ErrorModal)}>
-              Open Error Modal
-            </button>
-          )}
-        </ModalConsumer>
-
-        <div>
-          <label>Unesi ime: </label>
-          <TextInput
-            name="firstName"
-            placeholder="Ime..."
-            required
-            pattern={/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/}
-          />
-        </div>
-
-        <div>
-          <label>Unesi prezime: </label>
-          <TextInput
-            name="lastName"
-            placeholder="Prezime..."
-            required
-            pattern={/^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/}
-          />
-        </div>
-
-        <div>
-          <SubmitButton />
-        </div>
-      </Fragment>
-    </Form>
-  );
+    <Route path="/" component={Home} />
+    <Route path="/hello" component={Hello} />
+  </Router>)
 }
 
 const rootElement = document.getElementById("root");
